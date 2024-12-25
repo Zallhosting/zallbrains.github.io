@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple 2D Game</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #87CEEB; /* Sky blue background */
+            overflow: hidden;
+        }
+        canvas {
+            display: block;
+            margin: 0 auto;
+            background-color: #228B22; /* Grass green */
+            border: 2px solid #000; /* Black border */
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas" width="800" height="400"></canvas>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Player attributes
+        const player = {
+            x: 50,
+            y: 350,
+            width: 30,
+            height: 30,
+            color: '#FFD700', // Gold
+            speed: 5
+        };
+
+        // Obstacle attributes
+        const obstacle = {
+            x: 800,
+            y: 350,
+            width: 30,
+            height: 30,
+            color: '#8B0000', // Dark red
+            speed: 3
+        };
+
+        let isGameOver = false;
+
+        // Game loop
+        function gameLoop() {
+            if (isGameOver) {
+                ctx.fillStyle = 'black';
+                ctx.font = '30px Arial';
+                ctx.fillText('Game Over!', 300, 200);
+                return;
+            }
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw player
+            ctx.fillStyle = player.color;
+            ctx.fillRect(player.x, player.y, player.width, player.height);
+
+            // Draw obstacle
+            ctx.fillStyle = obstacle.color;
+            ctx.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+
+            // Move obstacle
+            obstacle.x -= obstacle.speed;
+            if (obstacle.x + obstacle.width < 0) {
+                obstacle.x = canvas.width;
+            }
+
+            // Collision detection
+            if (
+                player.x < obstacle.x + obstacle.width &&
+                player.x + player.width > obstacle.x &&
+                player.y < obstacle.y + obstacle.height &&
+                player.y + player.height > obstacle.y
+            ) {
+                isGameOver = true;
+            }
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Player controls
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowUp' && player.y > 0) {
+                player.y -= player.speed;
+            } else if (e.key === 'ArrowDown' && player.y + player.height < canvas.height) {
+                player.y += player.speed;
+            }
+        });
+
+        gameLoop();
+    </script>
+</body>
+</html>
